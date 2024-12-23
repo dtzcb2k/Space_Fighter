@@ -38,6 +38,14 @@ public class CameraControl : MonoBehaviour
         cameraHalfWidth = cameraHalfHeight * mainCamera.aspect;
     }
 
+
+    public Vector2 GetRightEdgePosition()
+    {
+        Vector2 rightEdge = new Vector2(cameraHalfWidth, 0); // 右邊界相對於相機的本地座標
+        return (Vector2)cameraPoint.position + (Vector2)rightEdge; // 將右邊界轉為世界座標
+    }
+
+
     // Update is called once per frame
     void Update()
     {
