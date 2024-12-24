@@ -9,11 +9,15 @@ public class UFOGenerator : MonoBehaviour
     public GameObject Alien2Prefab;
     float span = 1.0f;
     float delta = 0;
-
     private EnemyPool enemyPool;
+    private CameraControl cameraPoint; //導入鏡頭位移計算
+
     void Start()
     {
         enemyPool = FindObjectOfType<EnemyPool>();
+
+        // 初始化 cameraPoint
+        cameraPoint = FindObjectOfType<CameraControl>();
     }
 
     // Update is called once per frame
@@ -25,9 +29,10 @@ public class UFOGenerator : MonoBehaviour
         {
             this.delta = 0;//重置時間
             //GameObject go = Instantiate(Alien2Prefab) as GameObject;
-            GameObject enemyPrefab = enemyPool.GetObject(); // 從池中取出子彈
+            GameObject enemyPrefab = enemyPool.GetObject();
             int py = Random.Range(-4,4);
-            enemyPrefab.transform.position = new Vector3(13, py, 0);
+            Vector2 rightX = cameraPoint.GetRightEdgePosition();
+            enemyPrefab.transform.position = new Vector3(rightX.x, py, 0);
             
         }
     }

@@ -6,22 +6,24 @@ public class UFOControl : MonoBehaviour
 {
     // Start is called before the first frame update
     private EnemyPool enemyPool;
+    private CameraControl cameraPoint;
     void Start()
     {
         enemyPool = FindObjectOfType<EnemyPool>();
+        cameraPoint = FindObjectOfType<CameraControl>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(-0.01f, 0, 0,Space.World);
         //因為是使用translate所以可以使用世界座標進行方向上的移動
-        if (transform.position.x <-13)
+        transform.Translate(-0.01f, 0, 0,Space.World);
+        Vector2 limiteXY = cameraPoint.ComputeCamera(transform.position);
+        if (transform.position.x > limiteXY.x || transform.position.x < limiteXY.x)
         {
-            //Destroy(gameObject);
             enemyPool.ReturnObject(gameObject);
         }
-        
+
 
     }
     // 當觸發器開始時調用
