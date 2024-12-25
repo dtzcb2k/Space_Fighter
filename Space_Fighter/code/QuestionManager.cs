@@ -11,7 +11,7 @@ public class QuestionManager : MonoBehaviour
     public Button option2Button; // 按鈕選項 2
     public Button option3Button; // 按鈕選項 3
     public Button option4Button; // 按鈕選項 4
-    private BOSSControl bossControl; // 引用 BOSS 行為腳本
+    [SerializeField] private BOSSControl bossControl; // 引用 BOSS 行為腳本，避免BOSS在隱藏時抓不到
 
     private bool quizTriggered = false;
 
