@@ -20,7 +20,6 @@ public class QuestionManager : MonoBehaviour
 
     void Start()
     {
-        bossControl = FindObjectOfType<BOSSControl>(); // 找到場景中的 BOSSControl
         // 隱藏彈窗
         quizPanel.SetActive(false);
         correct.SetActive(false);
@@ -36,7 +35,7 @@ public class QuestionManager : MonoBehaviour
     void Update()
     {
         // 檢查 BOSS 血量是否低於一半，並確保只觸發一次
-        if (bossControl.BOSSStatue() && !quizTriggered)
+        if (bossControl.BOSSStatue(50) && !quizTriggered)
         {
             quizTriggered = true;
             TriggerQuiz();

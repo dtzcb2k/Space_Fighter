@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class hpControl : MonoBehaviour
 {
@@ -23,10 +24,10 @@ public class hpControl : MonoBehaviour
         // Update is called once per frame
         if (currentHP <= 0)
         {
-            Time.timeScale = 0;
-            Application.Quit(); //關閉應用程式
             Debug.Log("玩家死亡");
             // 玩家死亡邏輯
+            string Game_Over = "Game_Over";
+            SceneManager.LoadScene(Game_Over);
         }
     }    
     void Update()

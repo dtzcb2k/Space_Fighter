@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI; // UI都要導入這個
 
@@ -18,6 +19,7 @@ public class BOSSControl : MonoBehaviour
     private Rigidbody2D rb;                // BOSS Rigidbody2D
     private CameraControl cameraPoint;       // 主攝影機
     private Vector2 movementDirection; // 用於存儲移動方向
+    private bool moveOtherWay = false;
     void Start()
     {
         BOSSbulletPool = FindObjectOfType<BOSSBulletPool>();
@@ -29,6 +31,10 @@ public class BOSSControl : MonoBehaviour
     void Update()
     {
         currentFireCooldown -= Time.deltaTime;
+        if (currentFireCooldown <= 0f)
+        {
+            Attack();
+        }
     }
 
     // BOSS 行為邏輯
@@ -38,8 +44,6 @@ public class BOSSControl : MonoBehaviour
         {
             // 移動
             yield return StartCoroutine(Movement());
-            // 攻擊
-            Attack();
             // 等待下一次行為
             yield return new WaitForSeconds(BOSSMoveCooldown);
         }
@@ -53,7 +57,10 @@ public class BOSSControl : MonoBehaviour
 
         // 限制移動範圍（如果需要）
         newPosition = cameraPoint.ComputeCamera(newPosition);
-
+        if (Vector3.Distance(transform.position, newPosition) < 0.01f)
+        {
+            moveOtherWay = true;
+        }
         // 更新 Rigidbody2D 的位置
         rb.MovePosition(newPosition);
         
@@ -63,10 +70,19 @@ public class BOSSControl : MonoBehaviour
     // 控制 BOSS 移動
     private IEnumerator Movement()
     {
-        int direction = Random.Range(0, 2) == 0 ? -1 : 1; // 隨機向上或向下移動
-        float moveDuration = Random.Range(1f, 3f);         // 隨機移動持續時間
+        int direction;
+        if (moveOtherWay)
+        {
+            Vector2 status = gameObject.transform.position;
+            if (status.y > 0) { direction = -1; }
+            else { direction = 1; }
+        }
+        else
+        {
+            direction = Random.Range(0, 2) == 0 ? -1 : 1; // 隨機向上或向下移動
+        }
+        float moveDuration = Random.Range(1f, 2f);         // 隨機移動持續時間
         float elapsed = 0f;
-
         movementDirection = Vector2.up * direction; // 設置垂直移動方向
         while (elapsed < moveDuration)
         {
@@ -79,7 +95,6 @@ public class BOSSControl : MonoBehaviour
     // 處理 BOSS 攻擊
     private void Attack()
     {
-        Debug.Log("有想攻擊");
         // 攻擊冷卻計時
         if (currentFireCooldown <= 0f)
         {
@@ -88,10 +103,10 @@ public class BOSSControl : MonoBehaviour
             bullet1.transform.position = firePoint1.position;
             bullet1.transform.rotation = firePoint1.rotation;
 
-            //// 發射第二發子彈
-            //GameObject bullet2 = BOSSbulletPool.GetObject();
-            //bullet2.transform.position = firePoint2.position;
-            //bullet2.transform.rotation = firePoint2.rotation;
+            //發射第二發子彈
+            GameObject bullet2 = BOSSbulletPool.GetObject();
+            bullet2.transform.position = firePoint2.position;
+            bullet2.transform.rotation = firePoint2.rotation;
 
             currentFireCooldown = fireRate; // 重置冷卻時間
         }
@@ -108,9 +123,9 @@ public class BOSSControl : MonoBehaviour
         }
     }
 
-    public bool BOSSStatue() //是否要進入答題
+    public bool BOSSStatue( int hp ) //是否要進入答題
     {
-        if (BOSShpAmount<99)
+        if (BOSShpAmount <= hp)
         {
             return true;
         }
